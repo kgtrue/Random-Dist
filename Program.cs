@@ -19,8 +19,7 @@ static async void Run(IServiceProvider serviceProvider)
 {
     var randomDistroService = serviceProvider.GetRequiredService<IRandomDistroService>();
     var distroList = new ConcurrentDictionary<string, int>();
-    var tasks = new List<Task>();
-
+   
     Parallel.For(0, 100000000, new ParallelOptions() { MaxDegreeOfParallelism = 1000000 }, i =>
     {
         AddRandom(distroList, randomDistroService);
