@@ -6,13 +6,18 @@ using Random_Distro;
 using Random_Distro.Runners;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((_, services) => {
         services.AddSingleton<IRandomDistroService, RandomDistroService>();
-        services.AddSingleton<IPrintRandoDistro, PrintWithParallelFor>();
+        services.AddSingleton<IPrintRandoDistro, PrintWithParallelForEach>();
+        //services.AddSingleton<IPrintRandoDistro, PrintWithWhile>();
     })
     .Build();
-
-host.Services.GetRequiredService<IPrintRandoDistro>().RunPrint();
+var stopWatch = new Stopwatch();
+stopWatch.Start();
+host.Services.GetRequiredService<IPrintRandoDistro>().RunPrint(100000);
+stopWatch.Stop();
+Console.WriteLine($"Seconds: {stopWatch.ElapsedMilliseconds/1000}");

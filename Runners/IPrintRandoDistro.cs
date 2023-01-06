@@ -8,6 +8,6 @@ namespace Random_Distro.Runners
 {
     public interface IPrintRandoDistro
     {
-        public void RunPrint();
+        public void RunPrint(int randomMatches);
     }
 }
