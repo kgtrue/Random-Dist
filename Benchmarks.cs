@@ -20,7 +20,7 @@ namespace Random_Distro
         [Params(100000000)]
         public int N;
 
-        //[Benchmark]
+        [Benchmark]
         public string WithParallelForEach()
         {
             var result = withParallelForEach.GetMaxRandomRepeatingMatches(randomMatches);
