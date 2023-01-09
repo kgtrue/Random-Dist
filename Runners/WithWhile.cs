@@ -7,17 +7,22 @@ using System.Threading.Tasks;
 
 namespace Random_Distro.Runners
 {
-    public class PrintWithWhile : IPrintRandoDistro
+    public interface IWithWhile: IRepeatingMatches
+    {
+
+    }
+
+    public class WithWhile : IWithWhile
     {
         private readonly IRandomDistroService randomDistroService;
         private Dictionary<string, int> distroList = new Dictionary<string, int>();
 
-        public PrintWithWhile(IRandomDistroService randomDistroService)
+        public WithWhile(IRandomDistroService randomDistroService)
         {
             this.randomDistroService = randomDistroService;
         }
 
-        public void RunPrint(int randomMatches)
+        public string GetMaxRandomRepeatingMatches(int randomMatches)
         {
             while (distroList.Count()==0 || distroList.MaxBy(item => item.Value).Value < randomMatches)
             {
@@ -26,14 +31,13 @@ namespace Random_Distro.Runners
 
             var max = distroList.MaxBy(kvp => kvp.Value).Key;
 
-            Console.WriteLine($"Final Distro: {max}");
+            return $"Final Distro: {max} count: {distroList[max]}";
         }
 
         private void AddRandom(IRandomDistroService randomDistroService)
         {
             var distro = randomDistroService.GetDistroName();
             AddOrUpdate(distro);
-            Console.WriteLine($"Distro: {distro} distro value: {distroList[distro]}");
         }
 
         private void AddOrUpdate(string distro)

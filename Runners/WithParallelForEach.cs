@@ -7,17 +7,22 @@ using System.Threading.Tasks;
 
 namespace Random_Distro.Runners
 {
-    public class PrintWithParallelForEach : IPrintRandoDistro
+    public interface IWithParallelForEach: IRepeatingMatches
+    {
+
+    }
+
+    public class WithParallelForEach : IWithParallelForEach
     {
         private readonly IRandomDistroService randomDistroService;
         private ConcurrentDictionary<string, int> distroList = new ConcurrentDictionary<string, int>();
 
-        public PrintWithParallelForEach(IRandomDistroService randomDistroService)
+        public WithParallelForEach(IRandomDistroService randomDistroService)
         {
             this.randomDistroService = randomDistroService;
         }
 
-        public void RunPrint(int randomMatches = 100000000)
+        public string GetMaxRandomRepeatingMatches(int randomMatches = 100000000)
         {
             Parallel.ForEach(IterateUntilFalse(() => { return distroList.Count() == 0 || distroList.MaxBy(item => item.Value).Value < randomMatches; }), new ParallelOptions() { MaxDegreeOfParallelism = -1 }, i =>
             {
@@ -26,7 +31,7 @@ namespace Random_Distro.Runners
 
             var max = distroList.MaxBy(kvp => kvp.Value).Key;
 
-            Console.WriteLine($"Final Distro: {max}");
+            return $"Final Distro: {max} count: {distroList[max]}";
         }
 
         private IEnumerable<bool> IterateUntilFalse(Func<bool> condition)
@@ -38,7 +43,6 @@ namespace Random_Distro.Runners
         {
             var distro = randomDistroService.GetDistroName();
             distroList.AddOrUpdate(distro, 1, (key, value) => value + 1);
-            Console.WriteLine($"Distro: {distro} distro value: {distroList[distro]}");
         }
     }
 }
