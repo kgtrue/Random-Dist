@@ -8,19 +8,20 @@ using System.Threading.Tasks;
 
 namespace Random_Distro
 {
-    [SimpleJob(launchCount: 1, warmupCount: 1, iterationCount: 1, invocationCount:1)]
+    [SimpleJob(launchCount: 1, warmupCount: 1, iterationCount: 1, invocationCount: 1)]
     public class Benchmarks
     {
         private IRandomDistroService randomDistroService;
         private IWithParallelForEach withParallelForEach;
         private IWithWhile withWhile;
+        private IWithParallelForEachMulti withParallelForEachMulti;
         private int randomMatches;
 
-        
-        [Params(100000000)]
+
+        [Params(1_000_000_00)]
         public int N;
 
-        [Benchmark]
+        //[Benchmark]
         public string WithParallelForEach()
         {
             var result = withParallelForEach.GetMaxRandomRepeatingMatches(randomMatches);
@@ -28,7 +29,7 @@ namespace Random_Distro
             return result;
         }
 
-        [Benchmark]
+        //[Benchmark]
         public string WithWhile()
         {
             var result = withWhile.GetMaxRandomRepeatingMatches(randomMatches);
@@ -36,12 +37,22 @@ namespace Random_Distro
             return result;
         }
 
+        [Benchmark]
+        public string WithParallelForEachMulti()
+        {
+            var result = withParallelForEachMulti.Run(randomMatches, 14);
+            Console.WriteLine($"WithWhile: {result}");
+            return result;
+        }
+
+
         [GlobalSetup]
         public void Setup()
         {
             randomDistroService = new RandomDistroService();
             withParallelForEach = new WithParallelForEach(randomDistroService);
             withWhile = new WithWhile(randomDistroService);
+            withParallelForEachMulti = new WithParallelForEachMulti();
             randomMatches = N;
         }
 
