@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 namespace Random_Distro
 {
     [SimpleJob(launchCount: 1, warmupCount: 1, iterationCount: 1, invocationCount: 1)]
+    [MemoryDiagnoser]
+    [RankColumn]
     public class Benchmarks
     {
         private IRandomDistroService randomDistroService;
@@ -29,7 +31,7 @@ namespace Random_Distro
             return result;
         }
 
-        //[Benchmark]
+        [Benchmark]
         public string WithWhile()
         {
             var result = withWhile.GetMaxRandomRepeatingMatches(randomMatches);
@@ -41,6 +43,14 @@ namespace Random_Distro
         public string WithParallelForEachMulti()
         {
             var result = withParallelForEachMulti.Run(randomMatches, 14);
+            Console.WriteLine($"WithWhile: {result}");
+            return result;
+        }
+
+        [Benchmark]
+        public string WithLinq()
+        {
+            var result = withParallelForEachMulti.Run2(randomMatches, 14);
             Console.WriteLine($"WithWhile: {result}");
             return result;
         }

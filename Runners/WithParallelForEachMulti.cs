@@ -10,6 +10,7 @@ namespace Random_Distro.Runners
     public interface IWithParallelForEachMulti
     {
         string Run(int randomMatches, int upperBound);
+        string Run2(int randomMatches, int upperBound);
     }
 
     public class WithParallelForEachMulti : IWithParallelForEachMulti
@@ -21,15 +22,24 @@ namespace Random_Distro.Runners
             var random = new Random();
             var countToSearchFor = randomMatches;
             var numbers = Enumerable.Range(0, randomMatches * (upperBound)).Select(_ => random.Next(0, upperBound)).ToList();
-
-            var ng = numbers.GroupBy(x => x);
-            foreach (var g in ng)
-            {
-                Console.WriteLine($"Group: {g.Key} count {g.Count()}");
-            }
+             
 
             var found = ContainsParallelForEachMulti(numbers, countToSearchFor);
             return found.ToString();
+        }
+
+        public string Run2(int randomMatches, int upperBound)
+        {
+            var random = new Random();
+            var countToSearchFor = randomMatches;
+            var numbers = Enumerable.Range(0, randomMatches * (upperBound)).Select(_ => random.Next(0, upperBound)).ToList();
+
+            return ContainsLinqGroup(numbers, randomMatches).ToString();
+        }
+
+        public bool ContainsLinqGroup(List<int> counts, int countToSearchFor)
+        {
+           return counts.GroupBy(x => x).Any(g => g.Count() == countToSearchFor);            
         }
 
         public bool ContainsParallelForEachMulti(List<int> counts, int countToSearchFor)
@@ -47,5 +57,7 @@ namespace Random_Distro.Runners
 
             return foundValue;
         }
+
+       
     }
 }
